@@ -3,4 +3,4 @@
  *
  * @author potanin@UD
  */
-module.exports = process.env.APP_COVERAGE ? require( './static/codex/lib-cov/{{NAME}}' ) : require( './scripts/{{NAME}}' );
+module.exports = process.env.APP_COVERAGE ? require( './static/codex/lib-cov/models' ) : require( './scripts/models' );

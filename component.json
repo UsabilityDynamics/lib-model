@@ -1,26 +1,22 @@
 {
-  "name": "{{name}}",
+  "name": "models",
   "version": "0.0.1",
-  "description": "{{description}}",
-  "homepage": "http://github.com/UsabilityDynamics/{{name}}",
+  "description": "Component for creating and viewing models.",
+  "homepage": "http://github.com/UsabilityDynamics/lib-models",
   "private": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/UsabilityDynamics/{{name}}"
+    "url": "https://github.com/UsabilityDynamics/lib-models"
   },
   "dependencies": {
     "usabilitydynamics/lib-utility": "*"
   },  
-  "templates": [],
   "files": [
-    "files/{{name}}-schema.json"
-  ],
-  "styles": [
-    "styles/{{name}}.css"
+    "files/models-schema.json"
   ],
   "scripts": [
-    "scripts/{{name}}.js",
-    "scripts/{{name}}.php"
+    "scripts/models.js",
+    "scripts/models.php"
   ],
   "authors": [
     {
