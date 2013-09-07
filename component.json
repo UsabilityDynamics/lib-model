@@ -11,9 +11,6 @@
   "dependencies": {
     "usabilitydynamics/lib-utility": "*"
   },  
-  "files": [
-    "files/models-schema.json"
-  ],
   "scripts": [
     "scripts/models.js",
     "scripts/models.php"
