@@ -18,10 +18,17 @@
      * @class Models
      * @subpackage Models
      */
-    class Models {
+    class Models extends Utility {
 
-      // Class Version.
-      public $version = '0.1.1';
+      /**
+       * Models Class version.
+       *
+       * @public
+       * @static
+       * @property $version
+       * @type {Object}
+       */
+      public static $version = '0.1.1';
 
       /**
        * Constructor for the UD Models class.
