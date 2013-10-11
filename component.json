@@ -23,8 +23,8 @@
     "schemas/thing.json",
     "schemas/duration.json"
   ],
-  "libs": [
-    "libs/models.php"
+  "lib": [
+    "lib/models.php"
   ],
   "scripts": [
     "scripts/models.js"
