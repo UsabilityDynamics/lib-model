@@ -1,9 +1,9 @@
 {
     "project": {
-        "name": "models",
-        "version": "0.0.1",
-        "url": "https://github.com/UsabilityDynamics/lib-models/",
-        "logo": "http://a3d72a45d111006ec192-ec5b80a12b0b09b4d52373336afb4254.r80.cf1.rackcdn.com/usability-dynamics.png"
+        "name": "usabilitydynamics/lib-model",
+        "description": "",
+        "version": "",
+        "url": "http://github.com/usabilitydynamics/lib-models"
     },
     "files": {},
     "modules": {},

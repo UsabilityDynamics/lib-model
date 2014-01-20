@@ -1,6 +1,10 @@
 {
-  "name": "usabilitydynamics/lib-models",
-  "keywords": [ "api" ],
+  "name": "usabilitydynamics/lib-model",
+  "keywords": [
+    "shema",
+    "models",
+    "validation"
+  ],
   "type": "library",
   "require": {
     "usabilitydynamics/lib-utility": "*"
@@ -8,8 +12,8 @@
   "minimum-stability": "dev",
   "repositories": [
     {
-      "type": "vcs",
-      "url": "https://github.com/UsabilityDynamics/lib-utility"
+      "type": "composer",
+      "url": "http://repository.usabilitydynamics.com"
     }
   ],
   "autoload": {
@@ -36,8 +40,13 @@
       "role": "Developer"
     }
   ],
-  "support": {
-    "issues": "https://github.com/usabilitydynamics/lib-models/issues"
+  "extra": {
+    "component": {
+      "scripts": [
+        "scripts/udx.model.js",
+        "scripts/udx.model.validation.js"
+      ]
+    }
   },
   "license": "MIT"
 }
