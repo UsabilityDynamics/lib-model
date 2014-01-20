@@ -17,7 +17,7 @@
     }
   ],
   "autoload": {
-    "classmap": [ "lib/models.php" ]
+    "classmap": [ "lib" ]
   },
   "homepage": "http://github.com/usabilitydynamics/lib-models",
   "authors": [
