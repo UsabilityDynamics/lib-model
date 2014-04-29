@@ -1,3 +1,7 @@
+## Usage
+
+UsabilityDynamics\Model::define();
+
 ## License
 
 (The MIT License)

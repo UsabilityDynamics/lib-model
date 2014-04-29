@@ -1,8 +1,7 @@
 {
   "name": "lib-model",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Model Library.",
-  "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/UsabilityDynamics/lib-model"
