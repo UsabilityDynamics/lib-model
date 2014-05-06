@@ -34,16 +34,26 @@ namespace UsabilityDynamics {
       public static $version = '0.2.0';
 
       /**
+       * Define Data Structure
        *
+       * @param $args
+       * @param $args.type        (array) Type of structure.
+       * @param $args.version     (array) Version of structure.
+       * @param $args.types       (array) Post type definitions
+       * @param $args.meta        (array) Meta definitions.
+       * @param $args.taxonomies  (array) Taxonomy fields.
        *
+       * @return array|bool
        */
       static public function define( $args = array() ) {
 
         self::$args = wp_parse_args( $args, array(
-          'types' => array(), // Custom post types
-          'meta' => array(), // Meta fields
-          'taxonomies' => array(), // Taxonomies
-        ) );
+          'type' => null,
+          'version' => null,
+          'types' => array(),
+          'meta' => array(),
+          'taxonomies' => array()
+        ));
 
         $structure = array();
 
@@ -61,7 +71,7 @@ namespace UsabilityDynamics {
           // Register Post Type
           $data = ( isset( $type[ 'data' ] ) && is_array( $type[ 'data' ] ) ) ? $type[ 'data' ] : array();
 
-          register_post_type( $object_type, self::_prepare_post_type( $object_type, $data ) );
+          register_post_type( $object_type, self::_prepare_post_type( $object_type, $data ));
 
           // Define post type's taxonomies
           $taxonomies = ( isset( $type[ 'taxonomies' ] ) && is_array( $type[ 'taxonomies' ] ) ) ? $type[ 'taxonomies' ] : array(
@@ -72,7 +82,7 @@ namespace UsabilityDynamics {
           // STEP 2. Register taxonomy ( and Taxonomy's Post Type if theme supports 'extended-taxonomies' feature )
 
           // Initialize taxonomies if they don't exist and assign them to the current post type
-          foreach( $taxonomies as $taxonomy ) {
+          foreach( (array) $taxonomies as $taxonomy ) {
 
             if( empty( $taxonomy ) || !is_string( $taxonomy ) ) {
               continue;
@@ -87,7 +97,9 @@ namespace UsabilityDynamics {
 
             //** Add custom post type for our taxonomy if theme supports extended-taxonomies */
             $taxonomy_post_type = '_tp_' . $taxonomy;
+
             if( current_theme_supports( 'extended-taxonomies' ) && !post_type_exists( $taxonomy_post_type ) ) {
+
               register_post_type( $taxonomy_post_type, array(
                 'label' => $data[ 'label' ],
                 'public' => false,
@@ -98,6 +110,7 @@ namespace UsabilityDynamics {
                 ),
                 'supports' => array( 'title', 'editor' ),
               ));
+
             }
 
             if( isset( $structure[ $object_type ] ) && isset( $structure[ $object_type ]['terms' ] ) && is_array( $structure[ $object_type ]['terms' ] ) ) {
@@ -115,12 +128,16 @@ namespace UsabilityDynamics {
 
           // Init \RW_Meta_Box defines if needed
           if ( !defined( 'RWMB_VER' ) ) {
+
             $reflector = new \ReflectionClass( '\RW_Meta_Box' );
+
             $file = dirname( dirname( $reflector->getFileName() ) ) . '/meta-box.php';
             if( !file_exists( $file ) ) {
               return false;
             }
+
             include_once( $file );
+
           }
 
           $metaboxes = ( isset( $type[ 'meta' ] ) && is_array( $type[ 'meta' ] ) ) ? $type[ 'meta' ] : array();
@@ -146,6 +163,7 @@ namespace UsabilityDynamics {
         self::$structure = array();
 
         return $structure;
+        
       }
 
       /**
@@ -163,7 +181,7 @@ namespace UsabilityDynamics {
           'priority' => 'high',
           'autosave' => false,
           'fields' => array(),
-        ) );
+        ));
 
         // There is no sense to init empty metabox
         if( !is_array( $data[ 'fields' ] ) || empty( $data[ 'fields' ] ) ) {
@@ -171,6 +189,7 @@ namespace UsabilityDynamics {
         }
 
         $fields = array();
+
         foreach( $data[ 'fields' ] as $field ) {
           array_push( self::$structure[ $object_type ][ 'meta' ], $field );
           $fields[] = self::_prepare_metafield( $field );
@@ -179,6 +198,7 @@ namespace UsabilityDynamics {
         $data[ 'fields' ] = $fields;
 
         return $data;
+
       }
 
       /**
@@ -191,7 +211,7 @@ namespace UsabilityDynamics {
           'id' => $key,
           'name' => Utility::de_slug( $key ),
           'type' => 'text',
-        ) );
+        ));
         return $data;
       }
 
@@ -203,7 +223,7 @@ namespace UsabilityDynamics {
         $data = isset( self::$args[ 'taxonomies' ][ $key ] ) && is_array( self::$args[ 'taxonomies' ][ $key ] ) ? self::$args[ 'taxonomies' ][ $key ] : array();
         $data = wp_parse_args( $data, array(
           'label' => Utility::de_slug( $key ),
-        ) );
+        ));
         return $data;
       }
 
@@ -212,11 +232,13 @@ namespace UsabilityDynamics {
        *
        */
       static private function _prepare_post_type( $key, $args = array() ) {
+        
         $args = wp_parse_args( $args, array(
           'label' => Utility::de_slug( $key ),
           'exclude_from_search' => false,
-        ) );
+        ));
         return $args;
+        
       }
 
     }
