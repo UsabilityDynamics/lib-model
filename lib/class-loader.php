@@ -5,12 +5,12 @@
  * @author Usability Dynamics, Inc. <info@usabilitydynamics.com>
  * @author peshkov@UD
  */
-namespace UsabilityDynamics {
+namespace UsabilityDynamics\Model {
 
-  if( !class_exists( 'UsabilityDynamics\Model' ) ) {
+  if( !class_exists( 'UsabilityDynamics\Model\Loader' ) ) {
 
-    class Model {
-
+    class Loader {
+    
       /**
        *
        *
@@ -48,8 +48,6 @@ namespace UsabilityDynamics {
       static public function define( $args = array() ) {
 
         self::$args = wp_parse_args( $args, array(
-          'type' => null,
-          'version' => null,
           'types' => array(),
           'meta' => array(),
           'taxonomies' => array()
@@ -71,15 +69,17 @@ namespace UsabilityDynamics {
           // Register Post Type
           $data = ( isset( $type[ 'data' ] ) && is_array( $type[ 'data' ] ) ) ? $type[ 'data' ] : array();
 
-          register_post_type( $object_type, self::_prepare_post_type( $object_type, $data ));
-
+          if( !post_type_exists( $object_type ) ) {
+            register_post_type( $object_type, self::_prepare_post_type( $object_type, $data ));
+          }
+          
+          // STEP 2. Register taxonomy ( and Taxonomy's Post Type if theme supports 'extended-taxonomies' feature )
+          
           // Define post type's taxonomies
           $taxonomies = ( isset( $type[ 'taxonomies' ] ) && is_array( $type[ 'taxonomies' ] ) ) ? $type[ 'taxonomies' ] : array(
             'post_tag',
             'category',
           );
-
-          // STEP 2. Register taxonomy ( and Taxonomy's Post Type if theme supports 'extended-taxonomies' feature )
 
           // Initialize taxonomies if they don't exist and assign them to the current post type
           foreach( (array) $taxonomies as $taxonomy ) {
@@ -121,9 +121,9 @@ namespace UsabilityDynamics {
 
           // STEP 3. Set meta fields and meta boxes
 
-          // Break if Meta Box class doesn't exist
+          // Stop here if Meta Box class doesn't exist
           if( !class_exists( '\RW_Meta_Box' ) ) {
-            return false;
+            continue;
           }
 
           // Init \RW_Meta_Box defines if needed
@@ -133,7 +133,7 @@ namespace UsabilityDynamics {
 
             $file = dirname( dirname( $reflector->getFileName() ) ) . '/meta-box.php';
             if( !file_exists( $file ) ) {
-              return false;
+              continue;
             }
 
             include_once( $file );
