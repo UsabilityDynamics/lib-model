@@ -44,8 +44,8 @@
   "extra": {
     "component": {
       "scripts": [
-        "scripts/udx.model.js",
-        "scripts/udx.model.validation.js"
+        "static/scripts/udx.model.js",
+        "static/scripts/udx.model.validation.js"
       ]
     }
   },

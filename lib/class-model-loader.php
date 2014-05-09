@@ -47,7 +47,7 @@ namespace UsabilityDynamics\Model {
        */
       static public function define( $args = array() ) {
 
-        self::$args = wp_parse_args( $args, array(
+        self::$args = Utility::parse_args( $args, array(
           'types' => array(),
           'meta' => array(),
           'taxonomies' => array()
