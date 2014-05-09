@@ -62,6 +62,9 @@ namespace UsabilityDynamics\Model {
           'taxonomies' => array()
         ));
 
+        // Deep convert to object.
+        self::$args = json_decode( json_encode( self::$args ) );
+
         $structure = array();
 
         foreach( (array) self::$args->types as $object_type => $type ) {
@@ -76,10 +79,13 @@ namespace UsabilityDynamics\Model {
           // STEP 1. Register post_type
 
           // Register Post Type
-          $data = ( isset( $type->data ) && is_array( $type->data ) ) ? $type->data : array();
+          $data = ( isset( $type->data ) && ( is_array( $type->data ) || is_object( $type->data ) ) ? ( $type->data ? $type->data : $type[ 'data' ] ) : array() );
 
           if( !post_type_exists( $object_type ) ) {
             register_post_type( $object_type, self::_prepare_post_type( $object_type, $data ));
+          } else {
+            // $_extended = Utility::extend( $wp_post_types[ $object_type ], $type->data );
+            // $wp_post_types[ $object_type ] = $_extended[0];
           }
 
           // Set or extend Model definition.
@@ -155,10 +161,9 @@ namespace UsabilityDynamics\Model {
             include_once( $file );
 
           }
+          $metaboxes = ( isset( $type->meta ) && is_object( $type->meta ) ) ? $type->meta : array();
 
-          $metaboxes = ( isset( $type->meta ) && is_array( $type->meta ) ) ? $type->meta : array();
-
-          foreach( $metaboxes as $key => $data ) {
+          foreach( (array) $metaboxes as $key => $data ) {
             $data = self::_prepare_metabox( $key, $object_type, $data );
 
             if( $data ) {
@@ -225,7 +230,7 @@ namespace UsabilityDynamics\Model {
        *
        */
       static private function _prepare_metafield( $key ) {
-        $data = isset( self::$args[ 'meta' ][ $key ] ) ? (array) self::$args[ 'meta' ][ $key ] : array();
+        $data = isset( self::$args->meta->{$key} ) ? (array) self::$args->meta->{$key} : array();
         $data = wp_parse_args( $data, array(
           'id' => $key,
           'name' => Utility::de_slug( $key ),
@@ -239,7 +244,7 @@ namespace UsabilityDynamics\Model {
        *
        */
       static private function _prepare_taxonomy( $key ) {
-        $data = isset( self::$args[ 'taxonomies' ][ $key ] ) && is_array( self::$args[ 'taxonomies' ][ $key ] ) ? self::$args[ 'taxonomies' ][ $key ] : array();
+        $data = isset( self::$args->taxonomies->{$key} ) && is_array( self::$args->taxonomies->{$key} ) ? self::$args->taxonomies->{$key} : array();
         $data = wp_parse_args( $data, array(
           'label' => Utility::de_slug( $key ),
         ));

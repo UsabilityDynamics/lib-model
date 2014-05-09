@@ -45,11 +45,14 @@
        * Return list of defined schemas
        *
        * @author potanin@UD
-       * @method getSchemas
+       * @method getSchema
+       *
+       * @param null $name
+       *
        * @return array
        */
-      public static function getSchemas() {
-        return Model\Loader::$__schemas;
+      public static function getSchema( $name = null ) {
+        return $name ? Model\Loader::$__schemas[ $name ] : Model\Loader::$__schemas;
       }
 
     }
