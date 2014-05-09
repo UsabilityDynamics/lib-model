@@ -33,10 +33,15 @@ namespace UsabilityDynamics\Model {
 
       public function __construct( $data ) {
 
-        return parent::__construct( (array) $data );
+        try {
+
+          $_instance = parent::__construct( (array) $data );
+
+        } catch( Exception $e ) {}
+
+        return $_instance;
 
       }
-
 
     }
 

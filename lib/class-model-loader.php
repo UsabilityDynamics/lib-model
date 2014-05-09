@@ -183,9 +183,8 @@ namespace UsabilityDynamics\Model {
               ));
 
             }
-
-            if( isset( $structure[ $object_type ] ) && isset( $structure[ $object_type ]['terms' ] ) && is_array( $structure[ $object_type ]['terms' ] ) ) {
-              array_push( $structure[ $object_type ][ 'terms' ], $taxonomy );
+            if( isset( self::$structure[ $object_type ] ) && isset( self::$structure[ $object_type ]['terms' ] ) && is_array( self::$structure[ $object_type ]['terms' ] ) ) {
+              array_push( self::$structure[ $object_type ][ 'terms' ], $taxonomy );
             }
 
           }
