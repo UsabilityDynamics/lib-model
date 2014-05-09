@@ -38,7 +38,18 @@
        * @return mixed
        */
       public static function define( $args ) {
-        return Loader::define( $args );
+        return Model\Loader::define( $args );
+      }
+
+      /**
+       * Return list of defined schemas
+       *
+       * @author potanin@UD
+       * @method getSchemas
+       * @return array
+       */
+      public static function getSchemas() {
+        return Model\Loader::$__schemas;
       }
 
     }

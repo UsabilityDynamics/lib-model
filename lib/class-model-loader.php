@@ -10,7 +10,9 @@ namespace UsabilityDynamics\Model {
   if( !class_exists( 'UsabilityDynamics\Model\Loader' ) ) {
 
     class Loader {
-    
+
+      static public $__schemas = array();
+
       /**
        *
        *
@@ -37,8 +39,10 @@ namespace UsabilityDynamics\Model {
        * Define Data Structure
        *
        * @param $args
+       * @param $args.title       (array) Readable title.
+       * @param $args.schema      (array) URL to schema definition.
        * @param $args.type        (array) Type of structure.
-       * @param $args.version     (array) Version of structure.
+       * @param $args.revision    (array) Version of structure.
        * @param $args.types       (array) Post type definitions
        * @param $args.meta        (array) Meta definitions.
        * @param $args.taxonomies  (array) Taxonomy fields.
@@ -46,6 +50,11 @@ namespace UsabilityDynamics\Model {
        * @return array|bool
        */
       static public function define( $args = array() ) {
+        global $wp_post_types;
+
+        if( did_action( 'init' ) ) {
+          _doing_it_wrong( 'UsabilityDynamics\Model\Loader::define', 'Called too late.', self::$version );
+        }
 
         self::$args = Utility::parse_args( $args, array(
           'types' => array(),
@@ -55,7 +64,7 @@ namespace UsabilityDynamics\Model {
 
         $structure = array();
 
-        foreach( (array) self::$args[ 'types' ] as $object_type => $type ) {
+        foreach( (array) self::$args->types as $object_type => $type ) {
 
           $object_type = sanitize_key( $object_type );
 
@@ -67,18 +76,25 @@ namespace UsabilityDynamics\Model {
           // STEP 1. Register post_type
 
           // Register Post Type
-          $data = ( isset( $type[ 'data' ] ) && is_array( $type[ 'data' ] ) ) ? $type[ 'data' ] : array();
+          $data = ( isset( $type->data ) && is_array( $type->data ) ) ? $type->data : array();
 
           if( !post_type_exists( $object_type ) ) {
             register_post_type( $object_type, self::_prepare_post_type( $object_type, $data ));
           }
-          
+
+          // Set or extend Model definition.
+          $wp_post_types[ $object_type ]->__model = Utility::parse_args( $wp_post_types[ $object_type ]->__model, array(
+            'title' => $args->title,
+            'revision' => $args->revision,
+            'schema' => $args->schema
+          ));
+
           // STEP 2. Register taxonomy ( and Taxonomy's Post Type if theme supports 'extended-taxonomies' feature )
           
           // Define post type's taxonomies
-          $taxonomies = ( isset( $type[ 'taxonomies' ] ) && is_array( $type[ 'taxonomies' ] ) ) ? $type[ 'taxonomies' ] : array(
+          $taxonomies = ( isset( $type->taxonomies ) && is_array( $type->taxonomies ) ) ? $type->taxonomies : array(
             'post_tag',
-            'category',
+            'category'
           );
 
           // Initialize taxonomies if they don't exist and assign them to the current post type
@@ -140,7 +156,7 @@ namespace UsabilityDynamics\Model {
 
           }
 
-          $metaboxes = ( isset( $type[ 'meta' ] ) && is_array( $type[ 'meta' ] ) ) ? $type[ 'meta' ] : array();
+          $metaboxes = ( isset( $type->meta ) && is_array( $type->meta ) ) ? $type->meta : array();
 
           foreach( $metaboxes as $key => $data ) {
             $data = self::_prepare_metabox( $key, $object_type, $data );
@@ -155,8 +171,11 @@ namespace UsabilityDynamics\Model {
         // STEP 4. reset static vars and return structure data.
         $structure = array(
           'post_types' => self::$structure,
-          'schema' => self::$args,
+          'schema' => self::$args
         );
+
+        // Save to defined Schemas.
+        Loader::$__schemas[ $args->title ] = self::$args;
 
         self::$args = array();
 
@@ -237,6 +256,7 @@ namespace UsabilityDynamics\Model {
           'label' => Utility::de_slug( $key ),
           'exclude_from_search' => false,
         ));
+
         return $args;
         
       }
