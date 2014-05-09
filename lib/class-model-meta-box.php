@@ -31,11 +31,15 @@ namespace UsabilityDynamics\Model {
        */
       public static $version = '0.2.0';
 
-      public function __construct( $data ) {
+      /**
+       * @param $data     array
+       * @param $data.id  string
+       */
+      public function __construct( $data = array() ) {
 
         try {
 
-          $_instance = parent::__construct( (array) $data );
+          $_instance = parent::__construct( json_decode( json_encode( $data ), true ) );
 
         } catch( Exception $e ) {}
 

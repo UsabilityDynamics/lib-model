@@ -160,31 +160,31 @@ namespace UsabilityDynamics\Model {
             }
 
             if( !taxonomy_exists( $taxonomy ) ) {
-              $data = self::_prepare_taxonomy( $taxonomy );
-              register_taxonomy( $taxonomy, null, $data );
+               $data = self::_prepare_taxonomy( $taxonomy );
+              register_taxonomy( $data->id, null, $data );
             }
 
-            register_taxonomy_for_object_type( $taxonomy, $object_type );
+            register_taxonomy_for_object_type( $data->id, $object_type );
 
             //** Add custom post type for our taxonomy if theme supports extended-taxonomies */
-            $taxonomy_post_type = '_tp_' . $taxonomy;
+            $taxonomy_post_type = '_tp_' . $data->id;
 
             if( current_theme_supports( 'extended-taxonomies' ) && !post_type_exists( $taxonomy_post_type ) ) {
 
               register_post_type( $taxonomy_post_type, array(
-                'label' => $data[ 'label' ],
+                'label' => $data->label,
                 'public' => false,
                 'rewrite' => false,
                 'labels' => array(
-                  'name' => $data[ 'label' ],
-                  'edit_item' => 'Edit Term: ' . $data[ 'label' ]
+                  'name' => $data->label,
+                  'edit_item' => 'Edit Term: ' . $data->label
                 ),
                 'supports' => array( 'title', 'editor' ),
               ));
 
             }
             if( isset( self::$structure[ $object_type ] ) && isset( self::$structure[ $object_type ]['terms' ] ) && is_array( self::$structure[ $object_type ]['terms' ] ) ) {
-              array_push( self::$structure[ $object_type ][ 'terms' ], $taxonomy );
+              array_push( self::$structure[ $object_type ][ 'terms' ], $data->id );
             }
 
           }
@@ -192,14 +192,9 @@ namespace UsabilityDynamics\Model {
           $metaboxes = ( isset( $type->meta ) && is_object( $type->meta ) ) ? $type->meta : array();
 
           foreach( (array) $metaboxes as $key => $data ) {
-            //die( '<pre>' . print_r( $type->meta->{$key}, true ) . '</pre>' );
-            //$type->meta->{$key} = self::_prepare_metabox( $key, $object_type, $data );
-            //die( '<pre>' . print_r( self::$structure[ $object_type ], true ) . '</pre>' );
-            //self::$structure[ $object_type ]->meta[ $key ] = self::_prepare_metabox( $key, $object_type, $data );
-
             self::$__metaboxes[] =  self::_prepare_metabox( $key, $object_type, $data );
 
-            //new Meta_Box( self::_prepare_metabox( $key, $object_type, $data ) );
+            //die( '<pre>' . print_r( $data, true ) . '</pre>' );
           }
 
         }
@@ -237,13 +232,13 @@ namespace UsabilityDynamics\Model {
         $label = Utility::de_slug( $key );
 
         $data = Utility::parse_args( $data, array(
-          'id' => $key,
-          'title' => $label,
-          'pages' => array( $object_type ),
-          'context'  => 'normal',
-          'priority' => 'high',
-          'autosave' => false,
-          'fields' => array(),
+          'id'        => $key,
+          'title'     => $label,
+          'pages'     => array( $object_type ),
+          'context'   => 'normal',
+          'priority'  => 'high',
+          'autosave'  => false,
+          'fields'    => array(),
         ));
 
         // There is no sense to init empty metabox
@@ -258,6 +253,7 @@ namespace UsabilityDynamics\Model {
           $fields[] = self::_prepare_metafield( $field );
         }
 
+        // die( '<pre>' . print_r( $fields, true ) . '</pre>' );
         $data->fields = $fields;
 
         return $data;
@@ -269,13 +265,16 @@ namespace UsabilityDynamics\Model {
        *
        */
       static private function _prepare_metafield( $key ) {
-        $data = isset( self::$args->meta->{$key} ) ? (array) self::$args->meta->{$key} : array();
-        $data = wp_parse_args( $data, array(
-          'id' => $key,
-          'name' => Utility::de_slug( $key ),
-          'type' => 'text',
+        $data = isset( self::$args->meta->{$key} ) ? self::$args->meta->{$key} : array();
+
+        $data = Utility::parse_args( $data, array(
+          'id'    => $key,
+          'name'  => $data->name ? $data->name : Utility::de_slug( $key ),
+          'type'  => 'text'
         ));
+
         return $data;
+
       }
 
       /**
@@ -283,11 +282,18 @@ namespace UsabilityDynamics\Model {
        *
        */
       static private function _prepare_taxonomy( $key ) {
-        $data = isset( self::$args->taxonomies->{$key} ) && is_array( self::$args->taxonomies->{$key} ) ? self::$args->taxonomies->{$key} : array();
-        $data = wp_parse_args( $data, array(
-          'label' => Utility::de_slug( $key ),
+        $data = isset( self::$args->taxonomies->{$key} ) && is_object( self::$args->taxonomies->{$key} ) ? self::$args->taxonomies->{$key} : array();
+
+        $data = Utility::parse_args( $data, array(
+          'id' => $key,
+          'hierarchical' => true,
+          'public' => true,
+          'show_ui' => true,
+          'label' => $data->name ? $data->name : Utility::de_slug( $key ),
         ));
+
         return $data;
+
       }
 
       /**
