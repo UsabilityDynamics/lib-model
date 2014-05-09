@@ -11,6 +11,10 @@ namespace UsabilityDynamics\Model {
 
     class Loader {
 
+      /**
+       * Full Schema Store
+       *
+       */
       static public $__schemas = array();
 
       /**
@@ -26,6 +30,12 @@ namespace UsabilityDynamics\Model {
       static private $structure = array();
 
       /**
+       * Queued Metaboxes
+       *
+       */
+      public static $__metaboxes = array();
+
+      /**
        * Models Class version.
        *
        * @public
@@ -34,6 +44,49 @@ namespace UsabilityDynamics\Model {
        * @type {Object}
        */
       public static $version = '0.2.0';
+
+      /**
+       * Initialize Metbox Just Once.
+       *
+       * @return array
+       */
+      static public function initialize_metabox() {
+
+        $_results = array();
+
+        // Init \RW_Meta_Box defines if needed
+        if ( !defined( 'RWMB_VER' ) ) {
+
+          $reflector = new \ReflectionClass( '\RW_Meta_Box' );
+
+          $file = dirname( dirname( $reflector->getFileName() ) ) . '/meta-box.php';
+
+          if( !file_exists( $file ) ) {
+            wp_die( 'Meta box ' . $file . ' file not found.' );
+          }
+
+          include_once( $file );
+
+        }
+
+        // Stop here if Meta Box class doesn't exist
+        if( !class_exists( '\RW_Meta_Box' ) ) {
+          wp_die( 'RW_Meta_Box not found' );
+        }
+
+        foreach( (array) self::$__metaboxes as $key => $data ) {
+          $_results[] = new Meta_Box( $data );
+        }
+
+        return $_results;
+
+      }
+
+      /**
+       * Custom Admin Scripts
+       *
+       */
+      static public function admin_print_scripts() {}
 
       /**
        * Define Data Structure
@@ -51,10 +104,6 @@ namespace UsabilityDynamics\Model {
        */
       static public function define( $args = array() ) {
         global $wp_post_types;
-
-        if( did_action( 'init' ) ) {
-          _doing_it_wrong( 'UsabilityDynamics\Model\Loader::define', 'Called too late.', self::$version );
-        }
 
         self::$args = Utility::parse_args( $args, array(
           'types' => array(),
@@ -141,34 +190,17 @@ namespace UsabilityDynamics\Model {
 
           }
 
-          // STEP 3. Set meta fields and meta boxes
-
-          // Stop here if Meta Box class doesn't exist
-          if( !class_exists( '\RW_Meta_Box' ) ) {
-            continue;
-          }
-
-          // Init \RW_Meta_Box defines if needed
-          if ( !defined( 'RWMB_VER' ) ) {
-
-            $reflector = new \ReflectionClass( '\RW_Meta_Box' );
-
-            $file = dirname( dirname( $reflector->getFileName() ) ) . '/meta-box.php';
-            if( !file_exists( $file ) ) {
-              continue;
-            }
-
-            include_once( $file );
-
-          }
           $metaboxes = ( isset( $type->meta ) && is_object( $type->meta ) ) ? $type->meta : array();
 
           foreach( (array) $metaboxes as $key => $data ) {
-            $data = self::_prepare_metabox( $key, $object_type, $data );
+            //die( '<pre>' . print_r( $type->meta->{$key}, true ) . '</pre>' );
+            //$type->meta->{$key} = self::_prepare_metabox( $key, $object_type, $data );
+            //die( '<pre>' . print_r( self::$structure[ $object_type ], true ) . '</pre>' );
+            //self::$structure[ $object_type ]->meta[ $key ] = self::_prepare_metabox( $key, $object_type, $data );
 
-            if( $data ) {
-              new \RW_Meta_Box( $data );
-            }
+            self::$__metaboxes[] =  self::_prepare_metabox( $key, $object_type, $data );
+
+            //new Meta_Box( self::_prepare_metabox( $key, $object_type, $data ) );
           }
 
         }
@@ -182,8 +214,16 @@ namespace UsabilityDynamics\Model {
         // Save to defined Schemas.
         Loader::$__schemas[ $args->title ] = self::$args;
 
-        self::$args = array();
+        if( did_action( 'init' ) ) {
+          _doing_it_wrong( 'UsabilityDynamics\Model\Loader::define', 'Called too late, should be called on, or before, init action.', self::$version );
+          self::initialize_metabox();
+          self::admin_print_scripts();
+        }
 
+        add_action( 'init', array( '\UsabilityDynamics\Model\Loader', 'initialize_metabox' ), 10 );
+        add_action( 'admin_print_scripts', array( '\UsabilityDynamics\Model\Loader', 'admin_print_scripts' ), 10 );
+
+        self::$args = array();
         self::$structure = array();
 
         return $structure;
@@ -197,7 +237,7 @@ namespace UsabilityDynamics\Model {
       static private function _prepare_metabox( $key, $object_type, $data ) {
         $label = Utility::de_slug( $key );
 
-        $data = wp_parse_args( $data, array(
+        $data = Utility::parse_args( $data, array(
           'id' => $key,
           'title' => $label,
           'pages' => array( $object_type ),
@@ -208,18 +248,18 @@ namespace UsabilityDynamics\Model {
         ));
 
         // There is no sense to init empty metabox
-        if( !is_array( $data[ 'fields' ] ) || empty( $data[ 'fields' ] ) ) {
+        if( !is_array( $data->fields ) || empty( $data->fields ) ) {
           return false;
         }
 
         $fields = array();
 
-        foreach( $data[ 'fields' ] as $field ) {
+        foreach( $data->fields as $field ) {
           array_push( self::$structure[ $object_type ][ 'meta' ], $field );
           $fields[] = self::_prepare_metafield( $field );
         }
 
-        $data[ 'fields' ] = $fields;
+        $data->fields = $fields;
 
         return $data;
 

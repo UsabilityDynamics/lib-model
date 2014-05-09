@@ -1,34 +1,34 @@
 <?php
+/**
+ * Model Handler
+ *
+ * @namespace UsabilityDynamics
+ * @module UsabilityDynamics
+ * @author potanin@UD
+ * @version 0.0.1
+ */
+namespace UsabilityDynamics\Model {
+
   /**
-   * Model Handler
+   * Class Models
    *
-   * @namespace UsabilityDynamics
-   * @module UsabilityDynamics
-   * @author potanin@UD
-   * @version 0.0.1
+   * @author team@UD
+   * @version 0.1.1
+   * @class Utility
+   * @subpackage Models
    */
-  namespace UsabilityDynamics\Model {
+  class Utility extends \UsabilityDynamics\Utility {
 
     /**
-     * Class Models
+     * Models Class version.
      *
-     * @author team@UD
-     * @version 0.1.1
-     * @class Utility
-     * @subpackage Models
+     * @public
+     * @static
+     * @property $version
+     * @type {Object}
      */
-    class Utility extends \UsabilityDynamics\Utility {
-
-      /**
-       * Models Class version.
-       *
-       * @public
-       * @static
-       * @property $version
-       * @type {Object}
-       */
-      public static $version = '0.2.0';
-
-    }
+    public static $version = '0.2.0';
 
   }
+
+}
