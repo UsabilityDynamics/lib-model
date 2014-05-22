@@ -106,6 +106,7 @@ namespace UsabilityDynamics\Model {
         global $wp_post_types;
 
         self::$args = Utility::parse_args( $args, array(
+          'title' => null,
           'types' => array(),
           'meta' => array(),
           'taxonomies' => array()
@@ -206,13 +207,15 @@ namespace UsabilityDynamics\Model {
         );
 
         // Save to defined Schemas.
-        Loader::$__schemas[ $args->title ] = self::$args;
+        Loader::$__schemas[ self::$args->title ] = self::$args;
 
         if( did_action( 'init' ) ) {
-          _doing_it_wrong( 'UsabilityDynamics\Model\Loader::define', 'Called too late, should be called on, or before, init action.', self::$version );
+          // _doing_it_wrong( 'UsabilityDynamics\Model\Loader::define', 'Called too late, should be called on, or before, init action.', self::$version );
           self::initialize_metabox();
           self::admin_print_scripts();
         }
+
+        // if( current_action() !== 'init' ) {}
 
         add_action( 'init', array( '\UsabilityDynamics\Model\Loader', 'initialize_metabox' ), 10 );
         add_action( 'admin_print_scripts', array( '\UsabilityDynamics\Model\Loader', 'admin_print_scripts' ), 10 );
