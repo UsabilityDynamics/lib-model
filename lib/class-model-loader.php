@@ -266,7 +266,7 @@ namespace UsabilityDynamics\Model {
 
         $data = Utility::parse_args( $data, array(
           'id'    => $key,
-          'name'  => $data->name ? $data->name : Utility::de_slug( $key ),
+          'name'  => isset( $data->name ) ? $data->name : Utility::de_slug( $key ),
           'type'  => 'text'
         ));
 
