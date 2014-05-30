@@ -83,12 +83,6 @@ namespace UsabilityDynamics\Model {
       }
 
       /**
-       * Custom Admin Scripts
-       *
-       */
-      static public function admin_print_scripts() {}
-
-      /**
        * Define Data Structure
        *
        * @param $args
@@ -139,14 +133,16 @@ namespace UsabilityDynamics\Model {
           }
 
           // Set or extend Model definition.
-          $wp_post_types[ $object_type ]->__model = Utility::parse_args( $wp_post_types[ $object_type ]->__model, array(
+          $wp_post_types[ $object_type ]->__model = Utility::parse_args(
+            isset( $wp_post_types[ $object_type ]->__model ) ? $wp_post_types[ $object_type ]->__model : array()
+            , array(
             'title' => $args->title,
             'revision' => $args->revision,
             'schema' => $args->schema
           ));
 
           // STEP 2. Register taxonomy ( and Taxonomy's Post Type if theme supports 'extended-taxonomies' feature )
-          
+
           // Define post type's taxonomies
           $taxonomies = ( isset( $type->taxonomies ) && is_array( $type->taxonomies ) ) ? $type->taxonomies : array(
             'post_tag',
@@ -161,7 +157,7 @@ namespace UsabilityDynamics\Model {
             }
 
             if( !taxonomy_exists( $taxonomy ) ) {
-               $data = self::_prepare_taxonomy( $taxonomy );
+              $data = self::_prepare_taxonomy( $taxonomy );
               register_taxonomy( $data->id, null, $data );
             }
 
@@ -212,19 +208,17 @@ namespace UsabilityDynamics\Model {
         if( did_action( 'init' ) ) {
           // _doing_it_wrong( 'UsabilityDynamics\Model\Loader::define', 'Called too late, should be called on, or before, init action.', self::$version );
           self::initialize_metabox();
-          self::admin_print_scripts();
         }
 
         // if( current_action() !== 'init' ) {}
 
         add_action( 'init', array( '\UsabilityDynamics\Model\Loader', 'initialize_metabox' ), 10 );
-        add_action( 'admin_print_scripts', array( '\UsabilityDynamics\Model\Loader', 'admin_print_scripts' ), 10 );
 
         self::$args = array();
         self::$structure = array();
 
         return $structure;
-        
+
       }
 
       /**
@@ -292,7 +286,7 @@ namespace UsabilityDynamics\Model {
           'hierarchical' => true,
           'public' => true,
           'show_ui' => true,
-          'label' => $data->name ? $data->name : Utility::de_slug( $key ),
+          'label' => isset( $data->name ) ? $data->name : Utility::de_slug( $key ),
         ));
 
         return $data;
@@ -304,14 +298,14 @@ namespace UsabilityDynamics\Model {
        *
        */
       static private function _prepare_post_type( $key, $args = array() ) {
-        
+
         $args = wp_parse_args( $args, array(
           'label' => Utility::de_slug( $key ),
-          'exclude_from_search' => false,
+          'exclude_from_search' => false
         ));
 
         return $args;
-        
+
       }
 
     }
