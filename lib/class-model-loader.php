@@ -184,8 +184,20 @@ namespace UsabilityDynamics\Model {
               ));
 
             }
+            
             if( isset( self::$structure[ $object_type ] ) && isset( self::$structure[ $object_type ]['terms' ] ) && is_array( self::$structure[ $object_type ]['terms' ] ) ) {
               array_push( self::$structure[ $object_type ][ 'terms' ], $data->id );
+            }
+            
+            /** Maybe add predefined terms for current taxonomy */
+            if( !empty( $data->values ) ) {
+              foreach( (array)$data->values as $k => $v ) {
+                if( !term_exists( $v, $data->id ) ) {
+                  wp_insert_term( $v, $data->id, array(
+                    'slug' => $k,
+                  ) );
+                }
+              }
             }
 
           }
@@ -194,7 +206,6 @@ namespace UsabilityDynamics\Model {
 
           foreach( (array) $metaboxes as $key => $data ) {
             self::$__metaboxes[] =  self::_prepare_metabox( $key, $object_type, $data );
-
             //die( '<pre>' . print_r( $data, true ) . '</pre>' );
           }
 
@@ -213,8 +224,6 @@ namespace UsabilityDynamics\Model {
           // _doing_it_wrong( 'UsabilityDynamics\Model\Loader::define', 'Called too late, should be called on, or before, init action.', self::$version );
           self::initialize_metabox();
         }
-
-        // if( current_action() !== 'init' ) {}
 
         add_action( 'init', array( '\UsabilityDynamics\Model\Loader', 'initialize_metabox' ), 10 );
 
@@ -271,6 +280,7 @@ namespace UsabilityDynamics\Model {
         $data = Utility::parse_args( $data, array(
           'id'    => $key,
           'name'  => isset( $data->name ) ? $data->name : Utility::de_slug( $key ),
+          'attributes' => false,
           'type'  => 'text'
         ));
 
@@ -291,10 +301,10 @@ namespace UsabilityDynamics\Model {
           'public' => true,
           'show_ui' => true,
           'label' => isset( $data->name ) ? $data->name : Utility::de_slug( $key ),
+          'values' => array(), // Predefined values
         ));
 
         return $data;
-
       }
 
       /**
