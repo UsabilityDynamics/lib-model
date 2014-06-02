@@ -46,7 +46,7 @@ namespace UsabilityDynamics\Model {
       public static $version = '0.2.0';
 
       /**
-       * Initialize Metbox Just Once.
+       * Initialize Meta box Just Once.
        *
        * @return array
        */
@@ -100,10 +100,14 @@ namespace UsabilityDynamics\Model {
         global $wp_post_types;
 
         self::$args = Utility::parse_args( $args, array(
-          'title' => null,
+          // Required
           'types' => array(),
           'meta' => array(),
-          'taxonomies' => array()
+          'taxonomies' => array(),
+          // Optional
+          'title' => 'notitle_' . rand( 1001, 9999 ),
+          'revision' => null,
+          'schema' => null,
         ));
 
         // Deep convert to object.
@@ -136,9 +140,9 @@ namespace UsabilityDynamics\Model {
           $wp_post_types[ $object_type ]->__model = Utility::parse_args(
             isset( $wp_post_types[ $object_type ]->__model ) ? $wp_post_types[ $object_type ]->__model : array()
             , array(
-            'title' => $args->title,
-            'revision' => $args->revision,
-            'schema' => $args->schema
+            'title' => self::$args->title,
+            'revision' => self::$args->revision,
+            'schema' => self::$args->schema
           ));
 
           // STEP 2. Register taxonomy ( and Taxonomy's Post Type if theme supports 'extended-taxonomies' feature )
