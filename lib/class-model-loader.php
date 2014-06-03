@@ -138,8 +138,7 @@ namespace UsabilityDynamics\Model {
 
           // Set or extend Model definition.
           $wp_post_types[ $object_type ]->__model = Utility::parse_args(
-            isset( $wp_post_types[ $object_type ]->__model ) ? $wp_post_types[ $object_type ]->__model : array()
-            , array(
+            isset( $wp_post_types[ $object_type ]->__model ) ? $wp_post_types[ $object_type ]->__model : array(), array(
             'title' => self::$args->title,
             'revision' => self::$args->revision,
             'schema' => self::$args->schema
