@@ -164,27 +164,30 @@ namespace UsabilityDynamics\Model {
               register_taxonomy( $data->id, null, $data );
             }
 
-            register_taxonomy_for_object_type( $data->id, $object_type );
+            if( isset( $data->id ) ) {
+              register_taxonomy_for_object_type( $data->id, $object_type );
 
-            //** Add custom post type for our taxonomy if theme supports extended-taxonomies */
-            $taxonomy_post_type = '_tp_' . $data->id;
+              //** Add custom post type for our taxonomy if theme supports extended-taxonomies */
+              $taxonomy_post_type = '_tp_' . $data->id;
 
-            if( current_theme_supports( 'extended-taxonomies' ) && !post_type_exists( $taxonomy_post_type ) ) {
+              if( current_theme_supports( 'extended-taxonomies' ) && !post_type_exists( $taxonomy_post_type ) ) {
 
-              register_post_type( $taxonomy_post_type, array(
-                'label' => $data->label,
-                'public' => false,
-                'rewrite' => false,
-                'labels' => array(
-                  'name' => $data->label,
-                  'edit_item' => 'Edit Term: ' . $data->label
-                ),
-                'supports' => array( 'title', 'editor' ),
-              ));
+                register_post_type( $taxonomy_post_type, array(
+                  'label' => $data->label,
+                  'public' => false,
+                  'rewrite' => false,
+                  'labels' => array(
+                    'name' => $data->label,
+                    'edit_item' => 'Edit Term: ' . $data->label
+                  ),
+                  'supports' => array( 'title', 'editor' ),
+                ));
+
+              }
 
             }
-            
-            if( isset( self::$structure[ $object_type ] ) && isset( self::$structure[ $object_type ]['terms' ] ) && is_array( self::$structure[ $object_type ]['terms' ] ) ) {
+
+            if( isset( $data->id ) && isset( self::$structure[ $object_type ] ) && isset( self::$structure[ $object_type ]['terms' ] ) && is_array( self::$structure[ $object_type ]['terms' ] ) ) {
               array_push( self::$structure[ $object_type ][ 'terms' ], $data->id );
             }
             
