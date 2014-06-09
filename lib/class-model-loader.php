@@ -190,7 +190,7 @@ namespace UsabilityDynamics\Model {
             if( isset( $data->id ) && isset( self::$structure[ $object_type ] ) && isset( self::$structure[ $object_type ]['terms' ] ) && is_array( self::$structure[ $object_type ]['terms' ] ) ) {
               array_push( self::$structure[ $object_type ][ 'terms' ], $data->id );
             }
-            
+
             /** Maybe add predefined terms for current taxonomy */
             if( !empty( $data->values ) ) {
               foreach( (array)$data->values as $k => $v ) {
@@ -319,6 +319,11 @@ namespace UsabilityDynamics\Model {
           'label' => Utility::de_slug( $key ),
           'exclude_from_search' => false
         ));
+
+        /**
+         * Convert rewrites options to array
+         */
+        $args['rewrite'] = (array)$args['rewrite'];
 
         return $args;
 
