@@ -323,7 +323,9 @@ namespace UsabilityDynamics\Model {
         /**
          * Convert rewrites options to array
          */
-        $args['rewrite'] = (array)$args['rewrite'];
+        if ( !empty( $args['rewrite'] ) ) {
+          $args['rewrite'] = (array)$args['rewrite'];
+        }
 
         return $args;
 
