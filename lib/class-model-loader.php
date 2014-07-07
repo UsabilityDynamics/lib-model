@@ -41,8 +41,6 @@ namespace UsabilityDynamics\Model {
           'taxonomies' => array(), // Taxonomies
         ) );
         
-        $structure = array();
-        
         foreach( (array) self::$args[ 'types' ] as $object_type => $type ) {
         
           $object_type = sanitize_key( $object_type );
@@ -68,7 +66,7 @@ namespace UsabilityDynamics\Model {
             'post_tag',
             'category',
           );
-
+          
           // Initialize taxonomies if they don't exist and assign them to the current post type
           foreach( (array) $taxonomies as $taxonomy ) {
             
@@ -98,8 +96,8 @@ namespace UsabilityDynamics\Model {
               ));
             }
 
-            if( isset( $structure[ $object_type ] ) && isset( $structure[ $object_type ]['terms' ] ) && is_array( $structure[ $object_type ]['terms' ] ) ) {
-              array_push( $structure[ $object_type ][ 'terms' ], $taxonomy );
+            if( isset( self::$structure[ $object_type ]['terms' ] ) && is_array( self::$structure[ $object_type ]['terms' ] ) ) {
+              array_push( self::$structure[ $object_type ][ 'terms' ], $taxonomy );
             }
 
           }
@@ -135,16 +133,7 @@ namespace UsabilityDynamics\Model {
           
         }
         
-        // STEP 4. reset static vars and return structure data.
-        $structure = array(
-          'post_types' => self::$structure,
-          'schema' => self::$args,
-        );
-        
-        self::$args = array();
-        self::$structure = array();
-        
-        return $structure;
+        return self::$structure;
       }
       
       /**
