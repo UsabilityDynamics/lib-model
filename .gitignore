@@ -1,4 +1,5 @@
 temp
+vendor
 node_modules
 npm-debug.log
 static/codex
