@@ -9,7 +9,7 @@
   "require": {
     "usabilitydynamics/lib-utility": "*",
     "usabilitydynamics/lib-meta-box": "*",
-    "hanamura/wp-model": "*"
+    "hanamura/wp-model": "1.1.1"
   },
   "minimum-stability": "dev",
   "repositories": [
