@@ -8,7 +8,8 @@
   "type": "library",
   "require": {
     "usabilitydynamics/lib-utility": "*",
-    "usabilitydynamics/lib-meta-box": "*"
+    "usabilitydynamics/lib-meta-box": "*",
+    "hanamura/wp-model": "*"
   },
   "minimum-stability": "dev",
   "repositories": [

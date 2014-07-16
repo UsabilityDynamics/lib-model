@@ -15,31 +15,79 @@ namespace UsabilityDynamics\Model {
     class Manager {
     
       /**
-       * The list of existing custom structure
+       * Combined (Final) schema
+       *
+       * @type array
+       * @author peshkov@UD
+       */
+      private static $schema = array();
+    
+      /**
+       * The list of existing schemas
+       *
+       * @type array
+       * @author peshkov@UD
+       */
+      private static $schemas = array();
+      
+      /**
+       * Initialized Structure
        *
        * @type array
        * @author peshkov@UD
        */
       private static $structure = array();
       
+      /**
+       * Temp schemas data
+       *
+       * @type array
+       * @author peshkov@UD
+       */
       private static $data = array();
       
       /**
-       * Returns structure.
-       * should be called after 'init' action.
+       * Returns schemas or structure.
        *
+       * @param string $key
        * @return array
        * @author peshkov@UD
        */
-      static public function get() {
-        if( function_exists( 'did_action' ) && did_action( 'init' ) && current_filter() !== 'init' ) {
-          return self::$structure;
+      static public function get( $key = 'structure' ) {
+        switch( $key ) {
+        
+          case 'schemas':
+            return self::$schemas;
+          break;
+        
+          case 'schema':
+            if( function_exists( 'did_action' ) && did_action( 'init' ) && current_filter() !== 'init' ) {
+              return self::$schema;
+            }
+            break;
+          
+          // should be called after 'init' action.
+          case 'structure':
+            if( function_exists( 'did_action' ) && did_action( 'init' ) && current_filter() !== 'init' ) {
+              return self::$structure;
+            }
+            break;
+        
         }
+        
         return false;
       }
       
       /**
-       * Adds
+       * Adds schema to the schemas list
+       *
+       * @param array $data
+       * @param array $data.types       Post type definitions
+       * @param array $data.meta        Meta definitions.
+       * @param array $data.taxonomies  Taxonomy fields.
+       * @param string $data.title      Readable title.
+       * @param string $data.revision   Version of structure.
+       * @param string $data.schema     URL to schema definition.
        *
        * @author peshkov@UD
        */
@@ -50,14 +98,24 @@ namespace UsabilityDynamics\Model {
         }
         
         //** Initialize our structure at last moment. */
-        add_action( 'init', array( __CLASS__, 'init' ), 999 );
-      
-        array_push ( self::$data, wp_parse_args( $data, array(
-          'priority' => 10,
+        if( !has_action( 'init', array( __CLASS__, 'init' ) ) ) {
+          add_action( 'init', array( __CLASS__, 'init' ), 999 );
+        }
+        
+        $data = wp_parse_args( $data, array(
           'types' => array(),
           'meta' => array(),
-          'taxonomies' => array()
-        ) ) );
+          'taxonomies' => array(),
+          // Optional
+          'priority' => 10,
+          'title' => 'notitle_' . rand( 1001, 9999 ),
+          'revision' => null,
+          'schema' => null,
+        ) );
+        
+        array_push ( self::$data, $data );
+        
+        self::$schemas[ $data[ 'title' ] ];
         
         return true;
         
@@ -77,14 +135,18 @@ namespace UsabilityDynamics\Model {
         
         usort( self::$data, create_function( '$a,$b', 'if ($a[\'priority\'] == $b[\'priority\']) { return 0; } return ($a[\'priority\'] < $b[\'priority\']) ? 1 : -1;' ) );
         
-        $data = array();
+        self::$schema = array();
         foreach( self::$data as $d ) {
-          $data = Utility::extend( $data, $d );
+          // Clear our schema data.
+          $d = array(
+            'types' => $d[ 'types' ],
+            'meta' => $d[ 'meta' ],
+            'taxonomies' => $d[ 'taxonomies' ],
+          );
+          self::$schema = Utility::extend( self::$schema, $d );
         }
-        // Remove priority, it is not needed anymore
-        unset( $data[ 'priority' ] );
         
-        self::$structure = Loader::define( $data );
+        self::$structure = Loader::define( self::$schema );
       }
       
     }
