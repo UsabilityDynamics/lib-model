@@ -115,7 +115,7 @@ namespace UsabilityDynamics\Model {
         
         array_push ( self::$data, $data );
         
-        self::$schemas[ $data[ 'title' ] ];
+        self::$schemas[ $data[ 'title' ] ] = $data;
         
         return true;
         
