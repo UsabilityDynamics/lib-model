@@ -98,7 +98,7 @@ namespace UsabilityDynamics\Model {
       /**
        * Returns Object instead of Constructor
        */
-      public function get( $post = NULL, $post_type = 'post', $filter = 'raw' ) {
+      public static function get( $post = NULL, $post_type = 'post', $filter = 'raw' ) {
         $post = new self( $post, $post_type, $filter );
         return !$post->has_errors() ? $post : new \WP_Error( 'failed', trim( implode( ', ', $post->errors ) ) );
       }
