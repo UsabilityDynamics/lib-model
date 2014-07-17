@@ -77,21 +77,6 @@ namespace UsabilityDynamics\Model {
             $this->meta[ $key ] = $value;
           }
         }
-      
-        //** Set meta data */
-        if( $post && !is_wp_error( $post ) && key_exists( $post->post_type, (array) $this->structure ) ) {          
-          foreach( (array) $this->structure[ $post[ 'post_type' ] ][ 'meta' ] as $key ) {
-            $post[ $key ] = get_post_meta( $post_id, $key, false );
-            if( is_array( $post[ $key ] ) ) {
-              if( count( $post[ $key ] ) == 1 ) {
-                $post[ $key ] = array_shift( $post[ $key ] );
-              } else if( empty( $post[ $key ] ) ) {
-                $post[ $key ] = '';
-              }
-            }
-          }
-
-        }
 
       }
       
