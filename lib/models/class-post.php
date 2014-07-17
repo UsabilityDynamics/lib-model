@@ -55,7 +55,8 @@ namespace UsabilityDynamics\Model {
           }
         }
         
-        $post_type = !empty( $this->post_type ) ? $this->post_type : $post_type;
+        $_post_type = $this->post_type;
+        $post_type = !empty( $_post_type ) ? $_post_type : $post_type;
         
         $structure = \UsabilityDynamics\Model::get( 'structure', array() );
         $this->structure = isset( $structure[ $post_type ] ) ? $structure[ $post_type ] : array();
@@ -106,11 +107,8 @@ namespace UsabilityDynamics\Model {
        * Adds or Updates current post
        */
       public function save() {
-      
-        //echo "<pre>"; print_r( $d ); echo "</pre>"; die();
         
         //** STEP 1. Insert/Update Post Data */
-        
         //** Get rid of date data. It's being updated automatically. */
         $post = wp_parse_args( array(
           'post_date' => false,
@@ -125,7 +123,7 @@ namespace UsabilityDynamics\Model {
           wp_update_post( $post );
         }
         
-        //** STEP 1. Update Post Meta */
+        //** STEP 2. Update Post Meta */
         foreach( $this->meta as $key => $value ) {
           update_post_meta( $this->ID, $key, $value );
         }
