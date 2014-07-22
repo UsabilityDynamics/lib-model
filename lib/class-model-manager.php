@@ -15,6 +15,15 @@ namespace UsabilityDynamics\Model {
     class Manager {
     
       /**
+       * Class version.
+       *
+       * @public
+       * @static
+       * @type string
+       */
+      public static $version = '0.1.1';
+    
+      /**
        * Combined (Final) schema
        *
        * @type array

@@ -5,7 +5,7 @@
    * @namespace UsabilityDynamics
    * @module UsabilityDynamics
    * @author potanin@UD
-   * @version 0.3.0
+   * @version 0.3.1
    */
   namespace UsabilityDynamics {
 
@@ -19,14 +19,13 @@
     final class Model {
 
       /**
-       * Models Class version.
+       * Class version.
        *
        * @public
        * @static
-       * @property $version
-       * @type {Object}
+       * @type string
        */
-      public static $version = '0.3.0';
+      public static $version = '0.3.1';
 
       /**
        * Define Structure

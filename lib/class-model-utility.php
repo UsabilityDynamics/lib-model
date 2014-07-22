@@ -5,7 +5,6 @@
  * @namespace UsabilityDynamics
  * @module UsabilityDynamics
  * @author potanin@UD
- * @version 0.0.1
  */
 namespace UsabilityDynamics\Model {
 
@@ -13,7 +12,6 @@ namespace UsabilityDynamics\Model {
    * Class Models
    *
    * @author team@UD
-   * @version 0.1.1
    * @class Utility
    * @subpackage Models
    */
@@ -25,9 +23,9 @@ namespace UsabilityDynamics\Model {
      * @public
      * @static
      * @property $version
-     * @type {Object}
+     * @type type
      */
-    public static $version = '0.2.0';
+    public static $version = '0.1.0';
 
   }
 

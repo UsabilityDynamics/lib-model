@@ -12,6 +12,15 @@ namespace UsabilityDynamics\Model {
     class Loader {
     
       /**
+       * Class version.
+       *
+       * @public
+       * @static
+       * @type string
+       */
+      public static $version = '0.1.1';
+    
+      /**
        *
        *
        */

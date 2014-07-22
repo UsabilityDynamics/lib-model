@@ -5,7 +5,7 @@
  * @namespace UsabilityDynamics
  * @module UsabilityDynamics
  * @author peshkov@UD
- * @version 0.1.0
+ * @version 0.1.1
  */
 namespace UsabilityDynamics\Model {
 
@@ -13,6 +13,18 @@ namespace UsabilityDynamics\Model {
 
     class Post {
       
+      /**
+       * Class version.
+       *
+       * @public
+       * @static
+       * @type string
+       */
+      public static $version = '0.1.1';
+      
+      /**
+       *
+       */
       public $errors = array();
       
       /**
