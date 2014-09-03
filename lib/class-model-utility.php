@@ -25,7 +25,7 @@ namespace UsabilityDynamics\Model {
      * @property $version
      * @type type
      */
-    public static $version = '0.1.0';
+    public static $version = '0.3.1';
 
   }
 

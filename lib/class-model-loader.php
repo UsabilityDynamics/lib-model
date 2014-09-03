@@ -18,7 +18,7 @@ namespace UsabilityDynamics\Model {
        * @static
        * @type string
        */
-      public static $version = '0.1.1';
+      public static $version = '0.3.1';
     
       /**
        *
@@ -49,7 +49,7 @@ namespace UsabilityDynamics\Model {
           'meta' => array(), // Meta fields
           'taxonomies' => array(), // Taxonomies
         ) );
-        
+
         foreach( (array) self::$args[ 'types' ] as $object_type => $type ) {
         
           $object_type = sanitize_key( $object_type );
@@ -89,25 +89,8 @@ namespace UsabilityDynamics\Model {
             }
             
             register_taxonomy_for_object_type( $taxonomy, $object_type );
-            
-            //** Add custom post type for our taxonomy if theme supports extended-taxonomies */
-            $taxonomy_post_type = '_tp_' . $taxonomy;
-            if( current_theme_supports( 'extended-taxonomies' ) && !post_type_exists( $taxonomy_post_type ) ) {
-              register_post_type( $taxonomy_post_type, array(
-                'label' => $data[ 'label' ],
-                'public' => false,
-                'rewrite' => false,
-                'labels' => array(
-                  'name' => $data[ 'label' ],
-                  'edit_item' => 'Edit Term: ' . $data[ 'label' ]
-                ),
-                'supports' => array( 'title', 'editor' ),
-              ));
-            }
 
-            if( isset( self::$structure[ $object_type ]['terms' ] ) && is_array( self::$structure[ $object_type ]['terms' ] ) ) {
-              array_push( self::$structure[ $object_type ][ 'terms' ], $taxonomy );
-            }
+            self::_handle_extended_taxonomies( $taxonomy, $object_type, $data );
 
           }
           
@@ -130,9 +113,7 @@ namespace UsabilityDynamics\Model {
             include_once( $file );
           }
           
-          $metaboxes = ( isset( $type[ 'meta' ] ) && is_array( $type[ 'meta' ] ) ) ? $type[ 'meta' ] : array();
-
-          foreach( $metaboxes as $key => $data ) {
+          foreach( ( isset( $type[ 'meta' ] ) && is_array( $type[ 'meta' ] ) ) ? $type[ 'meta' ] : array() as $key => $data ) {
             $data = self::_prepare_metabox( $key, $object_type, $data );
 
             if( $data ) {
@@ -141,10 +122,44 @@ namespace UsabilityDynamics\Model {
           }
           
         }
+
+        // Flush rewrite rules. (hooks into admin_init).
+        Manager::flush_rewrites_once();
         
         return self::$structure;
+
       }
-      
+
+      /**
+       * Add Extended Taxonomy Post Types
+       *
+       * @param $taxonomy
+       * @param $object_type
+       * @param $data
+       */
+      static private function _handle_extended_taxonomies( $taxonomy, $object_type, $data ) {
+
+        //** Add custom post type for our taxonomy if theme supports extended-taxonomies */
+        $taxonomy_post_type = '_tp_' . $taxonomy;
+        if( current_theme_supports( 'extended-taxonomies' ) && !post_type_exists( $taxonomy_post_type ) ) {
+          register_post_type( $taxonomy_post_type, array(
+            'label' => $data[ 'label' ],
+            'public' => false,
+            'rewrite' => false,
+            'labels' => array(
+              'name' => $data[ 'label' ],
+              'edit_item' => 'Edit Term: ' . $data[ 'label' ]
+            ),
+            'supports' => array( 'title', 'editor' ),
+          ));
+        }
+
+        if( isset( self::$structure[ $object_type ]['terms' ] ) && is_array( self::$structure[ $object_type ]['terms' ] ) ) {
+          array_push( self::$structure[ $object_type ][ 'terms' ], $taxonomy );
+        }
+
+      }
+
       /**
        *
        *
@@ -168,6 +183,7 @@ namespace UsabilityDynamics\Model {
         }
 
         $fields = array();
+
         foreach( $data[ 'fields' ] as $field ) {
           array_push( self::$structure[ $object_type ][ 'meta' ], $field );
           $fields[] = self::_prepare_metafield( $field );

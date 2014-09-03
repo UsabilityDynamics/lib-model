@@ -62,9 +62,11 @@
         }
         return $r;
       }
-      
+
       /**
        * Just a wrapper
+       * @param string $key
+       * @return array
        */
       public static function get( $key = 'structure' ) {
         return Model\Manager::get( $key );

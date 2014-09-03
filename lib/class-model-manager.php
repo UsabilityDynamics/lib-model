@@ -21,7 +21,7 @@ namespace UsabilityDynamics\Model {
        * @static
        * @type string
        */
-      public static $version = '0.1.1';
+      public static $version = '0.3.1';
     
       /**
        * Combined (Final) schema
@@ -54,7 +54,15 @@ namespace UsabilityDynamics\Model {
        * @author peshkov@UD
        */
       private static $data = array();
-      
+
+      /**
+       *
+       * @var array
+       */
+      public static $flags = array(
+        "rewrites_flushed" => false
+      );
+
       /**
        * Returns schemas or structure.
        *
@@ -63,6 +71,7 @@ namespace UsabilityDynamics\Model {
        * @author peshkov@UD
        */
       static public function get( $key = 'structure' ) {
+
         switch( $key ) {
         
           case 'schemas':
@@ -86,7 +95,7 @@ namespace UsabilityDynamics\Model {
         
         return false;
       }
-      
+
       /**
        * Adds schema to the schemas list
        *
@@ -98,6 +107,7 @@ namespace UsabilityDynamics\Model {
        * @param string $data.revision   Version of structure.
        * @param string $data.schema     URL to schema definition.
        *
+       * @return bool
        * @author peshkov@UD
        */
       static public function set( $data ) {
@@ -125,9 +135,38 @@ namespace UsabilityDynamics\Model {
         array_push ( self::$data, $data );
         
         self::$schemas[ $data[ 'title' ] ] = $data;
-        
+
+
+
         return true;
         
+      }
+
+      /**
+       * Flush Rewrite Rules - but only once.
+       *
+       * Called by UsabilityDynamics\Model\Loader after each new model definition.
+       *
+       * @author potanin@UD
+       * @return bool
+       */
+      static public function flush_rewrites_once() {
+
+        if( Manager::$flags[ "rewrites_flushed" ] ) {
+          return false;
+        }
+
+        if( did_action( 'admin_init' ) ) {
+          return false;
+        }
+
+        add_action( 'admin_init', function() {
+          flush_rewrite_rules();
+          Manager::$flags[ "rewrites_flushed" ] = true;
+        });
+
+        return true;
+
       }
       
       /**
@@ -145,6 +184,7 @@ namespace UsabilityDynamics\Model {
         usort( self::$data, create_function( '$a,$b', 'if ($a[\'priority\'] == $b[\'priority\']) { return 0; } return ($a[\'priority\'] < $b[\'priority\']) ? 1 : -1;' ) );
         
         self::$schema = array();
+
         foreach( self::$data as $d ) {
           // Clear our schema data.
           $d = array(
