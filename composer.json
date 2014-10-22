@@ -8,9 +8,11 @@
   ],
   "type": "library",
   "require": {
-    "usabilitydynamics/lib-utility": "*",
-    "usabilitydynamics/lib-meta-box": "*",
+    "usabilitydynamics/lib-utility": "~0.3",
     "hanamura/wp-model": "1.1.1"
+  },
+  "require-dev": {
+    "usabilitydynamics/lib-meta-box": "master"
   },
   "minimum-stability": "dev",
   "repositories": [
