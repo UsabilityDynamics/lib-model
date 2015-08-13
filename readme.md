@@ -2,7 +2,7 @@
 
 UsabilityDynamics\Model::define();
 
-## License
+## License 
 
 (The MIT License)
 
