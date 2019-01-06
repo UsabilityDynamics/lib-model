@@ -181,7 +181,12 @@ namespace UsabilityDynamics\Model {
           _doing_it_wrong( __FUNCTION__, __( 'method must be called during \'init\' action.' ), '1.0' );
         }
         
-        usort( self::$data, create_function( '$a,$b', 'if ($a[\'priority\'] == $b[\'priority\']) { return 0; } return ($a[\'priority\'] < $b[\'priority\']) ? 1 : -1;' ) );
+        usort( self::$data, function($a, $b){
+          if ($a['priority'] == $b['priority']) { 
+            return 0; 
+          } 
+          return ($a['priority'] < $b['priority']) ? 1 : -1;
+        } );
         
         self::$schema = array();
 
