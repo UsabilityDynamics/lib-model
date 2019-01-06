@@ -5,7 +5,7 @@
    * @namespace UsabilityDynamics
    * @module UsabilityDynamics
    * @author potanin@UD
-   * @version 0.3.1
+   * @version 0.5.0
    */
   namespace UsabilityDynamics {
 
@@ -25,7 +25,7 @@
        * @static
        * @type string
        */
-      public static $version = '0.3.1';
+      public static $version = '0.5.0';
 
       /**
        * Define Structure

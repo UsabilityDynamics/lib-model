@@ -18,7 +18,7 @@ namespace UsabilityDynamics\Model {
        * @static
        * @type string
        */
-      public static $version = '0.3.1';
+      public static $version = '0.5.0';
     
       /**
        *
